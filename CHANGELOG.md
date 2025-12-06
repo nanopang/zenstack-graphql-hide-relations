@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of zenstack-hide-relations plugin
+- Initial release of zenstack-graphql-hide-relations plugin
 - `@show()` attribute for controlling relation visibility in GraphQL
 - `@hide()` attribute for hiding regular fields in GraphQL
 - Support for four visibility contexts: query, read, create, update

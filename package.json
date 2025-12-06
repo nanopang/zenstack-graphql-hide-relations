@@ -1,5 +1,5 @@
 {
-  "name": "zenstack-hide-relations",
+  "name": "zenstack-graphql-hide-relations",
   "version": "1.0.0",
   "description": "ZenStack plugin for controlling GraphQL field visibility with @show() and @hide() attributes",
   "main": "dist/index.js",
@@ -29,12 +29,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/zenstack-hide-relations.git"
+    "url": "https://github.com/yourusername/zenstack-graphql-hide-relations.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/zenstack-hide-relations/issues"
+    "url": "https://github.com/yourusername/zenstack-graphql-hide-relations/issues"
   },
-  "homepage": "https://github.com/yourusername/zenstack-hide-relations#readme",
+  "homepage": "https://github.com/yourusername/zenstack-graphql-hide-relations#readme",
   "peerDependencies": {
     "@zenstackhq/sdk": "^2.0.0"
   },

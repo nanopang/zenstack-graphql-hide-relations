@@ -1,6 +1,6 @@
-# zenstack-hide-relations
+# zenstack-graphql-hide-relations
 
-[![npm version](https://badge.fury.io/js/zenstack-hide-relations.svg)](https://www.npmjs.com/package/zenstack-hide-relations)
+[![npm version](https://badge.fury.io/js/zenstack-graphql-hide-relations.svg)](https://www.npmjs.com/package/zenstack-graphql-hide-relations)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ZenStack preprocessor plugin that provides fine-grained control over GraphQL field visibility using `@show()` and `@hide()` attributes.
@@ -16,14 +16,14 @@ ZenStack preprocessor plugin that provides fine-grained control over GraphQL fie
 ## Installation
 
 ```bash
-npm install zenstack-hide-relations
+npm install zenstack-graphql-hide-relations
 ```
 
 Or with your preferred package manager:
 
 ```bash
-pnpm add zenstack-hide-relations
-yarn add zenstack-hide-relations
+pnpm add zenstack-graphql-hide-relations
+yarn add zenstack-graphql-hide-relations
 ```
 
 ## Quick Start
@@ -34,7 +34,7 @@ Add to your `schema.zmodel`:
 
 ```zmodel
 plugin hideRelations {
-  provider = 'zenstack-hide-relations'
+  provider = 'zenstack-graphql-hide-relations'
   preprocessor = true
 }
 ```
@@ -291,6 +291,6 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
-- 🐛 [Report bugs](https://github.com/yourusername/zenstack-hide-relations/issues)
-- 💬 [Discussions](https://github.com/yourusername/zenstack-hide-relations/discussions)
-- 📖 [Documentation](https://github.com/yourusername/zenstack-hide-relations#readme)
+- 🐛 [Report bugs](https://github.com/yourusername/zenstack-graphql-hide-relations/issues)
+- 💬 [Discussions](https://github.com/yourusername/zenstack-graphql-hide-relations/discussions)
+- 📖 [Documentation](https://github.com/yourusername/zenstack-graphql-hide-relations#readme)
