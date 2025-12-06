@@ -1,0 +1,49 @@
+{
+  "name": "zenstack-hide-relations",
+  "version": "1.0.0",
+  "description": "ZenStack plugin for controlling GraphQL field visibility with @show() and @hide() attributes",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "zenstack",
+    "prisma",
+    "graphql",
+    "nestjs",
+    "plugin",
+    "relations",
+    "field-visibility",
+    "hide-field",
+    "nestjs-graphql"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/zenstack-hide-relations.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/zenstack-hide-relations/issues"
+  },
+  "homepage": "https://github.com/yourusername/zenstack-hide-relations#readme",
+  "peerDependencies": {
+    "@zenstackhq/sdk": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@zenstackhq/sdk": "^2.22.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
