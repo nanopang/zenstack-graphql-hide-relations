@@ -1,5 +1,5 @@
 {
-  "name": "zenstack-graphql-hide-relations",
+  "name": "@nanopang/zenstack-graphql-hide-relations",
   "version": "1.0.0",
   "description": "ZenStack plugin for controlling GraphQL field visibility with @graphql.show() and @graphql.hide() attributes",
   "main": "dist/index.js",
