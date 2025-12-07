@@ -3,7 +3,7 @@
 [![npm version](https://badge.fury.io/js/zenstack-graphql-hide-relations.svg)](https://www.npmjs.com/package/zenstack-graphql-hide-relations)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-ZenStack preprocessor plugin that provides fine-grained control over GraphQL field visibility using `@show()` and `@hide()` attributes.
+ZenStack preprocessor plugin that provides fine-grained control over GraphQL field visibility using `@graphql.show()` and `@graphql.hide()` attributes.
 
 ## Features
 
@@ -39,19 +39,18 @@ plugin hideRelations {
 }
 ```
 
-### 2. Define Custom Attributes
+### 2. Automatic Attribute Definitions
 
-Add these attribute definitions to your schema (typically in a base model file):
+The plugin automatically provides the following attributes when enabled:
 
-```zmodel
-/// Show field in GraphQL with context control
-/// Contexts: query (results+filters), read (results only), create, update
-attribute @show(query: Boolean?, read: Boolean?, create: Boolean?, update: Boolean?)
+- `@graphql.show()` - Show field in GraphQL with context control
+- `@graphql.hide()` - Hide field in GraphQL with context control (inverse of @graphql.show)
 
-/// Hide field in GraphQL with context control (inverse of @show)
-/// Contexts: query (results+filters), read (results only), create, update
-attribute @hide(query: Boolean?, read: Boolean?, create: Boolean?, update: Boolean?)
-```
+Both attributes support these contexts:
+- `query` - Query results + filters (output + WhereInput)
+- `read` - Query results only (output, no filters)
+- `create` - Create forms (CreateInput)
+- `update` - Update forms (UpdateInput)
 
 ### 3. Use in Your Models
 
@@ -61,15 +60,15 @@ model Book {
   title String
 
   // Show everywhere
-  author Author @show()
+  author Author @graphql.show()
 
   // Show in queries only (not in create/update forms)
-  publisher Publisher @show(query: true)
+  publisher Publisher @graphql.show(query: true)
 
   // Show in query results only (not in filters or forms)
-  stats Statistics @show(read: true)
+  stats Statistics @graphql.show(read: true)
 
-  // Hidden by default (no @show)
+  // Hidden by default (no @graphql.show)
   relatedBooks Book[]
 }
 ```
@@ -87,37 +86,37 @@ The plugin supports four visibility contexts:
 | `create` | Create forms | CreateInput |
 | `update` | Update forms | UpdateInput |
 
-### @show() Attribute
+### @graphql.show() Attribute
 
-Use `@show()` to make fields visible in GraphQL. By default, relations are **hidden everywhere**.
+Use `@graphql.show()` to make fields visible in GraphQL. By default, relations are **hidden everywhere**.
 
 **Examples:**
 
 ```zmodel
 model Product {
   // Show everywhere (output + all inputs)
-  category Category @show()
+  category Category @graphql.show()
 
   // Show in queries and filters only
-  supplier Supplier @show(query: true)
+  supplier Supplier @graphql.show(query: true)
 
   // Show in query results only (no filters)
-  analytics Analytics @show(read: true)
+  analytics Analytics @graphql.show(read: true)
 
   // Show in create forms only
-  initialStock Stock @show(create: true)
+  initialStock Stock @graphql.show(create: true)
 
   // Show in update forms only
-  revision Revision @show(update: true)
+  revision Revision @graphql.show(update: true)
 
   // Multiple contexts
-  owner User @show(query: true, create: true, update: true)
+  owner User @graphql.show(query: true, create: true, update: true)
 }
 ```
 
-### @hide() Attribute
+### @graphql.hide() Attribute
 
-Use `@hide()` to hide regular fields. By default, regular fields are **visible everywhere**.
+Use `@graphql.hide()` to hide regular fields. By default, regular fields are **visible everywhere**.
 
 **Examples:**
 
@@ -126,16 +125,16 @@ model User {
   email String  // Visible everywhere (default)
 
   // Hide everywhere
-  internalId String @hide()
+  internalId String @graphql.hide()
 
   // Hide from create and update forms
-  calculatedField Float @hide(create: true, update: true)
+  calculatedField Float @graphql.hide(create: true, update: true)
 
   // Hide from query results only
-  sensitiveData String @hide(read: true)
+  sensitiveData String @graphql.hide(read: true)
 
   // Hide from queries and filters
-  privateMetadata Json @hide(query: true)
+  privateMetadata Json @graphql.hide(query: true)
 }
 ```
 
@@ -148,7 +147,7 @@ Show in queries but not in forms:
 ```zmodel
 model Order {
   // Can query/filter, but cannot create/update via forms
-  customer Customer @show(query: true)
+  customer Customer @graphql.show(query: true)
 }
 ```
 
@@ -159,7 +158,7 @@ Allow setting during creation, but not updates:
 ```zmodel
 model Document {
   // Can set during creation, but cannot change later
-  documentType Type @show(create: true, query: true)
+  documentType Type @graphql.show(create: true, query: true)
 }
 ```
 
@@ -170,8 +169,8 @@ Hide completely from GraphQL:
 ```zmodel
 model User {
   // Never exposed in GraphQL
-  passwordHash String @hide()
-  internalFlags Json @hide()
+  passwordHash String @graphql.hide()
+  internalFlags Json @graphql.hide()
 }
 ```
 
@@ -182,7 +181,7 @@ Show in results but not in inputs:
 ```zmodel
 model Article {
   // Visible in query results, but not in any input forms
-  statistics ArticleStats @show(read: true)
+  statistics ArticleStats @graphql.show(read: true)
 }
 ```
 
@@ -190,7 +189,7 @@ model Article {
 
 This preprocessor plugin runs before schema generation and:
 
-1. Parses `@show()` and `@hide()` attributes from your ZenStack schema
+1. Parses `@graphql.show()` and `@graphql.hide()` attributes from your ZenStack schema
 2. Converts them to appropriate `/// @HideField()` comments
 3. These comments are then picked up by `prisma-nestjs-graphql` generator
 4. The generator applies `@HideField()` decorators to GraphQL types
@@ -201,9 +200,9 @@ This preprocessor plugin runs before schema generation and:
 
 ```zmodel
 model Book {
-  author Author @show(query: true)
-  publisher Publisher @show()
-  metadata Metadata  // No @show() = hidden
+  author Author @graphql.show(query: true)
+  publisher Publisher @graphql.show()
+  metadata Metadata  // No @graphql.show() = hidden
 }
 ```
 
@@ -237,7 +236,7 @@ By default, `prisma-nestjs-graphql` exposes all Prisma relations in GraphQL, whi
 This plugin inverts the default behavior:
 
 - ✅ **Hide by default** - All relations are hidden unless explicitly shown
-- ✅ **Opt-in visibility** - Use `@show()` to selectively expose relations
+- ✅ **Opt-in visibility** - Use `@graphql.show()` to selectively expose relations
 - ✅ **Better performance** - Prevents accidental N+1 queries
 - ✅ **Cleaner API** - Only expose relations you actually need
 - ✅ **Fine-grained control** - Show/hide in specific contexts
@@ -250,20 +249,20 @@ When both `query` and `read` are specified, `query` takes precedence (as it incl
 
 ```zmodel
 model Book {
-  // 'query' includes 'read', so this is equivalent to @show(query: true)
-  stats Statistics @show(query: true, read: true)
+  // 'query' includes 'read', so this is equivalent to @graphql.show(query: true)
+  stats Statistics @graphql.show(query: true, read: true)
 }
 ```
 
 ### Default Behaviors
 
 **Relations:**
-- Without `@show()`: Hidden everywhere
-- With `@show()` (no args): Visible everywhere
+- Without `@graphql.show()`: Hidden everywhere
+- With `@graphql.show()` (no args): Visible everywhere
 
 **Regular Fields:**
-- Without `@hide()`: Visible everywhere
-- With `@hide()` (no args): Hidden everywhere
+- Without `@graphql.hide()`: Visible everywhere
+- With `@graphql.hide()` (no args): Hidden everywhere
 
 ## Requirements
 

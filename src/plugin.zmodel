@@ -1,0 +1,19 @@
+// ZenStack plugin attribute definitions
+// These attributes are automatically available when the plugin is enabled
+
+/// Show field in GraphQL DTO with context control
+/// Contexts: query (results+filters), read (results only), create, update
+/// Examples:
+///   @graphql.show()                          - Show everywhere
+///   @graphql.show(query: true)               - Show in query results and filters only
+///   @graphql.show(read: true)                - Show in query results only (no filters)
+///   @graphql.show(create: true, update: true) - Show in create and update forms only
+attribute @graphql.show(query: Boolean?, read: Boolean?, create: Boolean?, update: Boolean?)
+
+/// Hide field in GraphQL DTO with context control (inverse of @graphql.show)
+/// Contexts: query (results+filters), read (results only), create, update
+/// Examples:
+///   @graphql.hide()                          - Hide everywhere
+///   @graphql.hide(query: true)               - Hide from query results and filters
+///   @graphql.hide(create: true, update: true) - Hide from create and update forms only
+attribute @graphql.hide(query: Boolean?, read: Boolean?, create: Boolean?, update: Boolean?)

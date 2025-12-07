@@ -1,11 +1,12 @@
 {
   "name": "zenstack-graphql-hide-relations",
   "version": "1.0.0",
-  "description": "ZenStack plugin for controlling GraphQL field visibility with @show() and @hide() attributes",
+  "description": "ZenStack plugin for controlling GraphQL field visibility with @graphql.show() and @graphql.hide() attributes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
+    "src/plugin.zmodel",
     "README.md",
     "LICENSE"
   ],

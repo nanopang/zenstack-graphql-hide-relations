@@ -7,7 +7,7 @@ import type { DMMF } from "@zenstackhq/sdk/prisma";
 // ============================================================================
 
 /**
- * Valid contexts for @show() attribute
+ * Valid contexts for @graphql.show() attribute
  */
 type ShowContext = "query" | "read" | "create" | "update";
 
@@ -28,12 +28,12 @@ interface HideFieldParams {
  * ZenStack Plugin: GraphQL Field Visibility Control
  *
  * Automatically adds /// @HideField() comments to Prisma schema for fields
- * based on @show() or @hide() attributes.
+ * based on @graphql.show() or @graphql.hide() attributes.
  *
  * Usage in schema.zmodel:
  *
  * plugin GraphqlHideRelations {
- *   provider = './plugins/hide-relations'
+ *   provider = 'zenstack-graphql-hide-relations'
  *   preprocessor = true
  * }
  *
@@ -41,15 +41,15 @@ interface HideFieldParams {
  *
  * model Book {
  *   // Show relation everywhere (output + all inputs)
- *   author Author @show()
+ *   author Author @graphql.show()
  *
  *   // Show in query/filters only (not in Create/Update forms)
- *   publisher Publisher @show(query: true)
+ *   publisher Publisher @graphql.show(query: true)
  *
  *   // Show in query results only (not in filters or forms)
- *   stats Statistics @show(read: true)
+ *   stats Statistics @graphql.show(read: true)
  *
- *   // Relations without @show() are hidden everywhere by default
+ *   // Relations without @graphql.show() are hidden everywhere by default
  *   relatedBooks Book[]
  * }
  *
@@ -59,18 +59,18 @@ interface HideFieldParams {
  *   email String  // Shown everywhere by default
  *
  *   // Hide from Create/Update inputs (shown in query/read)
- *   privatePrice Float @hide(create: true, update: true)
+ *   privatePrice Float @graphql.hide(create: true, update: true)
  *
  *   // Hide everywhere
- *   internalId String @hide()
+ *   internalId String @graphql.hide()
  *
  *   // Show only in Create forms (not Update or query)
- *   initialValue String @show(create: true)
+ *   initialValue String @graphql.show(create: true)
  * }
  */
 
 /**
- * Convert @show() boolean flags to @HideField match pattern
+ * Convert @graphql.show() boolean flags to @HideField match pattern
  *
  * Context meanings:
  * - 'query': Query results + filters (output + WhereInput)
@@ -180,7 +180,7 @@ function contextsToHideFieldPattern(
 }
 
 /**
- * Parse @show() attribute arguments to extract contexts from boolean flags
+ * Parse @graphql.show() attribute arguments to extract contexts from boolean flags
  *
  * @param attr - The attribute AST node
  * @param fieldName - Name of the field being processed
@@ -188,11 +188,11 @@ function contextsToHideFieldPattern(
  * @returns Array of contexts or null if should show everywhere
  *
  * @example
- * // Input: @show(query: true, read: true)
+ * // Input: @graphql.show(query: true, read: true)
  * // Output: ['query', 'read']
  *
  * @example
- * // Input: @show()
+ * // Input: @graphql.show()
  * // Output: null (show everywhere)
  */
 function parseShowContexts(
@@ -201,7 +201,7 @@ function parseShowContexts(
   modelName: string
 ): ShowContext[] | null {
   if (!attr.args || attr.args.length === 0) {
-    return null; // @show() = show everywhere
+    return null; // @graphql.show() = show everywhere
   }
 
   const contexts: ShowContext[] = [];
@@ -213,9 +213,9 @@ function parseShowContexts(
 
     if (!validContexts.includes(name)) {
       console.warn(
-        `⚠️  [GraphqlHideRelations] Unknown parameter "${name}" in @show() on ${modelName}.${fieldName}\n` +
+        `⚠️  [GraphqlHideRelations] Unknown parameter "${name}" in @graphql.show() on ${modelName}.${fieldName}\n` +
           `   Valid: query, read, create, update\n` +
-          `   Example: @show(query: true, read: true)`
+          `   Example: @graphql.show(query: true, read: true)`
       );
       continue;
     }
@@ -231,9 +231,9 @@ function parseShowContexts(
 }
 
 /**
- * Parse @hide() attribute arguments to extract contexts from boolean flags
+ * Parse @graphql.hide() attribute arguments to extract contexts from boolean flags
  *
- * @hide() works as the inverse of @show() - it specifies where to HIDE the field
+ * @graphql.hide() works as the inverse of @graphql.show() - it specifies where to HIDE the field
  *
  * @param attr - The attribute AST node
  * @param fieldName - Name of the field being processed
@@ -241,11 +241,11 @@ function parseShowContexts(
  * @returns @HideField params or null if should hide everywhere
  *
  * @example
- * // Input: @hide(query: true)
+ * // Input: @graphql.hide(query: true)
  * // Output: { match: '*(*Where*Input)|*(*OrderBy*Input)|(Output)' }
  *
  * @example
- * // Input: @hide()
+ * // Input: @graphql.hide()
  * // Output: { input: true, output: true } (hide everywhere)
  */
 function parseHideContexts(
@@ -254,7 +254,7 @@ function parseHideContexts(
   modelName: string
 ): HideFieldParams | null {
   if (!attr.args || attr.args.length === 0) {
-    // @hide() = hide everywhere
+    // @graphql.hide() = hide everywhere
     return { input: true, output: true };
   }
 
@@ -267,9 +267,9 @@ function parseHideContexts(
 
     if (!validContexts.includes(name)) {
       console.warn(
-        `⚠️  [GraphqlHideRelations] Unknown parameter "${name}" in @hide() on ${modelName}.${fieldName}\n` +
+        `⚠️  [GraphqlHideRelations] Unknown parameter "${name}" in @graphql.hide() on ${modelName}.${fieldName}\n` +
           `   Valid: query, read, create, update\n` +
-          `   Example: @hide(query: true, create: true)`
+          `   Example: @graphql.hide(query: true, create: true)`
       );
       continue;
     }
@@ -287,8 +287,8 @@ function parseHideContexts(
   }
 
   // Convert hidden contexts to HideField pattern
-  // @hide(query: true) means hide from query results and filters
-  // @hide(create: true) means hide from create forms
+  // @graphql.hide(query: true) means hide from query results and filters
+  // @graphql.hide(create: true) means hide from create forms
   // etc.
 
   const hasQuery = hiddenContexts.includes("query");
@@ -463,13 +463,13 @@ const plugin: PluginFunction = async (
       const fieldName = field.name;
       const isRelation = field.type.reference?.ref?.$type === "DataModel";
 
-      // Process @show() attribute (relations and normal fields)
-      const showAttr = findAttribute(field, "show");
+      // Process @graphql.show() attribute (relations and normal fields)
+      const showAttr = findAttribute(field, "graphql.show");
       if (showAttr) {
         const contexts = parseShowContexts(showAttr, fieldName, modelName);
 
         if (contexts === null) {
-          // @show() with no args - show everywhere
+          // @graphql.show() with no args - show everywhere
           if (isRelation) shownRelations++;
           continue;
         }
@@ -486,8 +486,8 @@ const plugin: PluginFunction = async (
         continue;
       }
 
-      // Process @hide() attribute (relations and normal fields)
-      const hideAttr = findAttribute(field, "hide");
+      // Process @graphql.hide() attribute (relations and normal fields)
+      const hideAttr = findAttribute(field, "graphql.hide");
       if (hideAttr) {
         const hideFieldParams = parseHideContexts(
           hideAttr,
@@ -497,8 +497,8 @@ const plugin: PluginFunction = async (
 
         if (hideFieldParams === null) {
           console.warn(
-            `⚠️  [GraphqlHideRelations] @hide() without contexts on ${modelName}.${fieldName}\n` +
-              `   Use @hide() to hide everywhere or @hide(query: true, create: true) for specific contexts`
+            `⚠️  [GraphqlHideRelations] @graphql.hide() without contexts on ${modelName}.${fieldName}\n` +
+              `   Use @graphql.hide() to hide everywhere or @graphql.hide(query: true, create: true) for specific contexts`
           );
           continue;
         }
